@@ -13,7 +13,8 @@ import Tuit from "../../models/tuits/Tuit";
 const TuitSchema = new mongoose.Schema<Tuit>({
     tuit: {type: String, required: true},
     postedOn: {type: Date, default: Date.now()},
-    postedBy: {type: Schema.Types.ObjectId, ref: "UserModel"},
+    //postedBy: {type: Schema.Types.ObjectId, ref: "UserModel"},
+    postedBy: {type: String, ref: "UserModel"},
     // @ts-ignore
     stats: {
         replies: {type: Number, default: 0},

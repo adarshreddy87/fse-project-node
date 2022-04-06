@@ -29,11 +29,15 @@ import 'dotenv/config'
 const session = require("express-session");
 const app = express();
 let sess = {
-    secret: process.env.SECRET,
+    // put this into an env file
+    secret: "secretKey",
     proxy: true,
     cookie: {
-        secure: true,
+        // this must be set to false when running the client and server locally.
+        // when we deploy, change this to true
+        secure: false,
         sameSite: 'none'
+        // provide resave option (per warning)
     }
 }
 
@@ -48,7 +52,7 @@ app.use(session(sess));
 app.use(express.json());
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://fse-sp22-juanong-a4.netlify.app']
+    origin: ['http://localhost:3000']
 }));
 
 app.get('/hello', (req, res) =>
@@ -58,9 +62,9 @@ app.get('/add/:a/:b', (req, res) => {
     res.send(req.params.a + req.params.b);
 })
 const PROTOCOL = "mongodb+srv";
-const DB_USERNAME = process.env.DB_USERNAME;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const HOST = "fse-a4-cluster.i1u1n.mongodb.net";
+const DB_USERNAME = "tuiter-admin";
+const DB_PASSWORD = "tuiterpassword";
+const HOST = "tuiterdatabase.oa2ca.mongodb.net";
 const DB_NAME= "myFirstDatabase";
 const DB_QUERY= "retryWrites=true&w=majority";
 const connectionString = `${PROTOCOL}://${DB_USERNAME}:${DB_PASSWORD}@${HOST}/${DB_NAME}?${DB_QUERY}`;
