@@ -33,7 +33,9 @@ let sess = {
     secret: "secretKey",
     proxy: true,
     cookie: {
-        secure: true,
+        // this must be set to false when running the client and server locally.
+        // when we deploy, change this to true
+        secure: false,
         sameSite: 'none'
         // provide resave option (per warning)
     }
