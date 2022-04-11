@@ -30,6 +30,7 @@ export default class BookmarkController implements BookmarkControllerI {
             BookmarkController.bookmarkController = new BookmarkController();
             app.get('/api/users/:uid/bookmarks', BookmarkController.bookmarkController.findAllTuitsBookmarkedByUser);
             app.get('/api/tuits/:tid/bookmarks', BookmarkController.bookmarkController.findAllUsersThatBookmarkedTuit);
+            app.get('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.findUserBookmarkedTuit);
             app.post('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.userBookmarksTuit);
             app.delete('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.userUnbookmarksTuit);
         }
@@ -45,7 +46,12 @@ export default class BookmarkController implements BookmarkControllerI {
      * relevant tuit objects
      */
     findAllTuitsBookmarkedByUser(req: Request, res: Response) {
-        return BookmarkController.bookmarkDao.findAllTuitsBookmarkedByUser(req.params.uid)
+        const uid = req.params.uid;
+        // @ts-ignore
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ?
+            profile._id : uid;
+        return BookmarkController.bookmarkDao.findAllTuitsBookmarkedByUser(userId)
             .then(bookmarks => res.json(bookmarks));
     }
 
@@ -81,5 +87,16 @@ export default class BookmarkController implements BookmarkControllerI {
     userUnbookmarksTuit(req: Request, res: Response) {
         return BookmarkController.bookmarkDao.userUnbookmarksTuit(req.params.uid, req.params.tid)
             .then(status => res.send(status));
+    }
+
+    findUserBookmarkedTuit(req: Request, res: Response) {
+        const uid = req.params.uid;
+        const tid = req.params.tid;
+        // @ts-ignore
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ?
+            profile._id : uid;
+        return BookmarkController.bookmarkDao.findUserBookmarkedTuit(userId, tid)
+            .then(bookmark => res.json(bookmark));
     }
 }
