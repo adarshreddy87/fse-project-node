@@ -5,8 +5,6 @@ import {Request, Response, Express} from "express";
 import TuitDao from '../daos/TuitDao';
 import TuitControllerI from '../interfaces/TuitControllerI';
 import Tuit from "../models/tuits/Tuit";
-import BookmarkController from "./BookmarkController";
-import BookmarkDao from "../daos/BookmarkDao";
 
 /**
  * @class TuitController Implements RESTful Web service API for tuits resource.
@@ -25,7 +23,6 @@ import BookmarkDao from "../daos/BookmarkDao";
 export default class TuitController implements TuitControllerI {
     private static tuitDao: TuitDao = TuitDao.getInstance();
     private static tuitController: TuitController | null = null;
-    private static bookmarkDao: BookmarkDao = BookmarkDao.getInstance();
     /**
      * Create a single instance of the tuit controller
      * @param {Express} app Express instance to declare the RESTful web service API
@@ -111,10 +108,10 @@ export default class TuitController implements TuitControllerI {
      * @param {Response} res Represents response to client, including status
      * on whether deleting a user was successful or not
      */
-    deleteTuit = (req: Request, res: Response) => {
+    deleteTuit = (req: Request, res: Response) =>
         TuitController.tuitDao.deleteTuit(req.params.tid)
             .then(status => res.json(status));
-    }
+
     /**
      * Edits a particular instance of a tuit
      * @param {Request} req Represents request from client, including path
