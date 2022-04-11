@@ -5,7 +5,6 @@
 import Tuit from '../models/tuits/Tuit';
 import TuitModel from '../mongoose/tuits/TuitModel';
 import TuitDaoI from '../interfaces/TuitDaoI';
-import UserModel from "../mongoose/users/UserModel";
 
 /**
  * @class TuitDao implements a data access object that manages all tuit data

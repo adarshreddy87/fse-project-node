@@ -33,6 +33,8 @@ export default class BookmarkController implements BookmarkControllerI {
             app.get('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.findUserBookmarkedTuit);
             app.post('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.userBookmarksTuit);
             app.delete('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.userUnbookmarksTuit);
+            app.get('/api/users/:uid/bookmarks/toggle/:tid', BookmarkController.bookmarkController.userTogglesBookmark);
+            app.delete('/api/tuits/:tid/bookmarks', BookmarkController.bookmarkController.deleteAllBookmarksOfTuit);
         }
         return BookmarkController.bookmarkController;
     }
@@ -98,5 +100,32 @@ export default class BookmarkController implements BookmarkControllerI {
             profile._id : uid;
         return BookmarkController.bookmarkDao.findUserBookmarkedTuit(userId, tid)
             .then(bookmark => res.json(bookmark));
+    }
+
+    userTogglesBookmark = async (req: Request, res: Response) => {
+        const uid = req.params.uid;
+        const tid = req.params.tid;
+        // @ts-ignore
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ?
+            profile._id : uid;
+        try {
+            const userHasBookmarkedTuit = await BookmarkController.bookmarkDao.findUserBookmarkedTuit(userId, tid);
+            if (userHasBookmarkedTuit) {
+                // unbookmark
+                await BookmarkController.bookmarkDao.userUnbookmarksTuit(userId, tid);
+            } else {
+                // bookmark
+                await BookmarkController.bookmarkDao.userBookmarksTuit(userId, tid);
+            }
+            res.sendStatus(200);
+        } catch (e) {
+            res.sendStatus(404);
+        }
+    }
+
+    deleteAllBookmarksOfTuit = async(req: Request, res: Response) => {
+        await BookmarkController.bookmarkDao.deleteAllBookmarksOfTuit(req.params.tid)
+            .then(status => res.send(status));
     }
 }
