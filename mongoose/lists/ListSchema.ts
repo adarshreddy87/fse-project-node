@@ -7,7 +7,7 @@ import List from "../../models/lists/List";
  * @proprety {ObjectId} addedUser represents the user added by the logged in user.
  */
 const ListSchema = new mongoose.Schema<List>({
-    addedBy : {type: Schema.Types.ObjectId, ref: "UserModel"},
+    addedBy : {type: String, ref: "UserModel"},
     addedUser : {type: Schema.Types.ObjectId, ref: "UserModel"}
 }, {collection: "lists"});
 
