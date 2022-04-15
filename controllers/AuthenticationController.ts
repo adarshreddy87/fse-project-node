@@ -1,4 +1,4 @@
-import {Express, Request, Response} from "express";
+import { Express, Request, Response } from "express";
 import UserDao from "../daos/UserDao";
 
 const bcrypt = require("bcrypt");
@@ -6,7 +6,7 @@ const saltRounds = 10;
 
 const AuthenticationController = (app: Express) => {
     const userDao: UserDao = UserDao.getInstance();
-    const signUp = async(req: Request, res: Response) => {
+    const signUp = async (req: Request, res: Response) => {
         const newUser = req.body;
         const password = newUser.password;
         newUser.password = await bcrypt.hash(password, saltRounds);
