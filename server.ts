@@ -13,7 +13,7 @@
  * Connects to a remote MongoDB instance hosted on the Atlas cloud database
  * service
  */
-import express, {Request, Response} from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import UserController from "./controllers/UserController";
 import TuitController from "./controllers/TuitController";
@@ -58,11 +58,11 @@ app.get('/add/:a/:b', (req, res) => {
     res.send(req.params.a + req.params.b);
 })
 const PROTOCOL = "mongodb+srv";
-const DB_USERNAME = process.env.DB_USERNAME;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const HOST = "fse-a4-cluster.i1u1n.mongodb.net";
-const DB_NAME= "myFirstDatabase";
-const DB_QUERY= "retryWrites=true&w=majority";
+const DB_USERNAME = "tuiter-admin";
+const DB_PASSWORD = "tuiterpassword";
+const HOST = "tuiterdatabase.oa2ca.mongodb.net";
+const DB_NAME = "myFirstDatabase";
+const DB_QUERY = "retryWrites=true&w=majority";
 const connectionString = `${PROTOCOL}://${DB_USERNAME}:${DB_PASSWORD}@${HOST}/${DB_NAME}?${DB_QUERY}`;
 mongoose.connect(connectionString);
 
