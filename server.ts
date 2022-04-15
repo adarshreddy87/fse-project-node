@@ -25,15 +25,20 @@ import DislikeController from "./controllers/DislikeController";
 import AuthenticationController from "./controllers/AuthenticationController";
 import mongoose from 'mongoose';
 import 'dotenv/config'
+import ListController from "./controllers/ListController";
 
 const session = require("express-session");
 const app = express();
 let sess = {
-    secret: process.env.SECRET,
+    // put this into an env file
+    secret: "secretKey",
     proxy: true,
     cookie: {
-        secure: true,
+        // this must be set to false when running the client and server locally.
+        // when we deploy, change this to true
+        secure: false,
         sameSite: 'none'
+        // provide resave option (per warning)
     }
 }
 
@@ -48,7 +53,7 @@ app.use(session(sess));
 app.use(express.json());
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://fse-sp22-juanong-a4.netlify.app']
+    origin: ['http://localhost:3000']
 }));
 
 app.get('/hello', (req, res) =>
@@ -61,8 +66,8 @@ const PROTOCOL = "mongodb+srv";
 const DB_USERNAME = "tuiter-admin";
 const DB_PASSWORD = "tuiterpassword";
 const HOST = "tuiterdatabase.oa2ca.mongodb.net";
-const DB_NAME = "myFirstDatabase";
-const DB_QUERY = "retryWrites=true&w=majority";
+const DB_NAME= "myFirstDatabase";
+const DB_QUERY= "retryWrites=true&w=majority";
 const connectionString = `${PROTOCOL}://${DB_USERNAME}:${DB_PASSWORD}@${HOST}/${DB_NAME}?${DB_QUERY}`;
 mongoose.connect(connectionString);
 
@@ -73,6 +78,7 @@ const bookmarkController = BookmarkController.getInstance(app);
 const followController = FollowController.getInstance(app);
 const messageController = MessageController.getInstance(app);
 const dislikeController = DislikeController.getInstance(app);
+const listController = ListController.getInstance(app);
 AuthenticationController(app);
 /**
  * Start a server listening at port 4000 locally

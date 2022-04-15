@@ -28,10 +28,13 @@ export default class BookmarkController implements BookmarkControllerI {
     public static getInstance = (app: Express): BookmarkController => {
         if (BookmarkController.bookmarkController === null) {
             BookmarkController.bookmarkController = new BookmarkController();
-            app.get('/users/:uid/bookmarks', BookmarkController.bookmarkController.findAllTuitsBookmarkedByUser);
-            app.get('/tuits/:tid/bookmarks', BookmarkController.bookmarkController.findAllUsersThatBookmarkedTuit);
-            app.post('/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.userBookmarksTuit);
-            app.delete('/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.userUnbookmarksTuit);
+            app.get('/api/users/:uid/bookmarks', BookmarkController.bookmarkController.findAllTuitsBookmarkedByUser);
+            app.get('/api/tuits/:tid/bookmarks', BookmarkController.bookmarkController.findAllUsersThatBookmarkedTuit);
+            app.get('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.findUserBookmarkedTuit);
+            app.post('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.userBookmarksTuit);
+            app.delete('/api/users/:uid/bookmarks/:tid', BookmarkController.bookmarkController.userUnbookmarksTuit);
+            app.get('/api/users/:uid/bookmarks/toggle/:tid', BookmarkController.bookmarkController.userTogglesBookmark);
+            app.delete('/api/tuits/:tid/bookmarks', BookmarkController.bookmarkController.deleteAllBookmarksOfTuit);
         }
         return BookmarkController.bookmarkController;
     }
@@ -45,7 +48,12 @@ export default class BookmarkController implements BookmarkControllerI {
      * relevant tuit objects
      */
     findAllTuitsBookmarkedByUser(req: Request, res: Response) {
-        return BookmarkController.bookmarkDao.findAllTuitsBookmarkedByUser(req.params.uid)
+        const uid = req.params.uid;
+        // @ts-ignore
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ?
+            profile._id : uid;
+        return BookmarkController.bookmarkDao.findAllTuitsBookmarkedByUser(userId)
             .then(bookmarks => res.json(bookmarks));
     }
 
@@ -80,6 +88,44 @@ export default class BookmarkController implements BookmarkControllerI {
      */
     userUnbookmarksTuit(req: Request, res: Response) {
         return BookmarkController.bookmarkDao.userUnbookmarksTuit(req.params.uid, req.params.tid)
+            .then(status => res.send(status));
+    }
+
+    findUserBookmarkedTuit(req: Request, res: Response) {
+        const uid = req.params.uid;
+        const tid = req.params.tid;
+        // @ts-ignore
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ?
+            profile._id : uid;
+        return BookmarkController.bookmarkDao.findUserBookmarkedTuit(userId, tid)
+            .then(bookmark => res.json(bookmark));
+    }
+
+    userTogglesBookmark = async (req: Request, res: Response) => {
+        const uid = req.params.uid;
+        const tid = req.params.tid;
+        // @ts-ignore
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ?
+            profile._id : uid;
+        try {
+            const userHasBookmarkedTuit = await BookmarkController.bookmarkDao.findUserBookmarkedTuit(userId, tid);
+            if (userHasBookmarkedTuit) {
+                // unbookmark
+                await BookmarkController.bookmarkDao.userUnbookmarksTuit(userId, tid);
+            } else {
+                // bookmark
+                await BookmarkController.bookmarkDao.userBookmarksTuit(userId, tid);
+            }
+            res.sendStatus(200);
+        } catch (e) {
+            res.sendStatus(404);
+        }
+    }
+
+    deleteAllBookmarksOfTuit = async(req: Request, res: Response) => {
+        await BookmarkController.bookmarkDao.deleteAllBookmarksOfTuit(req.params.tid)
             .then(status => res.send(status));
     }
 }
