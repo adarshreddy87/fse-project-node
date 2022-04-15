@@ -29,7 +29,7 @@ export default class BookmarkDao implements BookmarkDaoI {
      * @param uid {string} user primary key
      */
     findAllTuitsBookmarkedByUser = (uid: string): Promise<Bookmark[]> =>
-        BookmarkModel.find({bookmarkedBy: uid}).populate("tuit").exec();
+        BookmarkModel.find({ bookmarkedBy: uid }).populate("tuit").exec();
 
     /**
      * Calls on BookmarkModel to retrieve all users that have bookmarked a specific tuit,
@@ -37,7 +37,7 @@ export default class BookmarkDao implements BookmarkDaoI {
      * @param tid {string} tuit primary key
      */
     findAllUsersThatBookmarkedTuit = (tid: string): Promise<Bookmark[]> =>
-        BookmarkModel.find({tuit: tid}).populate("bookmarkedBy").exec();
+        BookmarkModel.find({ tuit: tid }).populate("bookmarkedBy").exec();
 
     /**
      * Calls on BookmarkModel to create a new Bookmark instance
@@ -45,19 +45,19 @@ export default class BookmarkDao implements BookmarkDaoI {
      * @param tid {string} tuit primary key
      */
     userBookmarksTuit = (uid: string, tid: string): Promise<any> =>
-        BookmarkModel.create({tuit: tid, bookmarkedBy: uid});
+        BookmarkModel.create({ tuit: tid, bookmarkedBy: uid });
 
     /**
      * Calls on BookmarkModel to delete an existing instance of Bookmark
      * @param uid {string} user primary key
      * @param tid {string} tuit primary key
      */
-    userUnbookmarksTuit = async(uid: string, tid: string): Promise<any> =>
-        BookmarkModel.deleteOne({tuit: tid, bookmarkedBy: uid});
+    userUnbookmarksTuit = async (uid: string, tid: string): Promise<any> =>
+        BookmarkModel.deleteOne({ tuit: tid, bookmarkedBy: uid });
 
-    findUserBookmarkedTuit = async(uid: string, tid: string): Promise<any> =>
-        BookmarkModel.findOne({tuit: tid, bookmarkedBy: uid});
+    findUserBookmarkedTuit = async (uid: string, tid: string): Promise<any> =>
+        BookmarkModel.findOne({ tuit: tid, bookmarkedBy: uid });
 
-    deleteAllBookmarksOfTuit = async(tid: string): Promise<any> =>
-        BookmarkModel.deleteMany({tuit: tid});
+    deleteAllBookmarksOfTuit = async (tid: string): Promise<any> =>
+        BookmarkModel.deleteMany({ tuit: tid });
 }
