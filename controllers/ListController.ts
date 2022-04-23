@@ -126,17 +126,19 @@ export default class ListController implements ListControllerI {
         const userId = uid === "me" && profile ? profile._id : uid;
         let usersList: any[] = [];
         let usersListIds : any[] = [];
-        let tuitsList: any[] = [];
+        let usersTuitsList: any[] = [];
         usersList = await ListController.listDao.getAllUsersInList(userId);
         for (let user of usersList) {
             usersListIds.push(user.addedUser._id)
         }
-        for (let userId of usersListIds) {
-            let tuit = await ListController.tuitDao.findAllTuitsByUser(userId)
-            if (!(tuit.length == 0)) {
-                tuitsList.push(tuit)
+        for (let usrId of usersListIds) {
+            let tuitList = await ListController.tuitDao.findAllTuitsByUser(usrId)
+            if (tuitList.length) {
+                for (let tuit of tuitList) {
+                    usersTuitsList.push(tuit)
+                }
             }
         }
-        return res.json(tuitsList);
+        return res.json(usersTuitsList);
     }
 };
