@@ -67,7 +67,11 @@ export default class ListController implements ListControllerI {
      * successful or not.
      */
     removeUserFromList = (req: Request, res: Response) => {
-        ListController.listDao.removeUserFromList(req.params.uid, req.params.userId)
+        const uid = req.params.uid;
+        // @ts-ignore
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ? profile._id : uid;
+        ListController.listDao.removeUserFromList(userId, req.params.userId)
             .then(status => res.send(status));
     }
 
@@ -79,7 +83,11 @@ export default class ListController implements ListControllerI {
      * containing the user.
      */
     addUserToList = (req: Request, res: Response) => {
-        ListController.listDao.addUserToList(req.params.uid, req.params.userId)
+        const uid = req.params.uid;
+        // @ts-ignore
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ? profile._id : uid;
+        ListController.listDao.addUserToList(userId, req.params.userId)
             .then(status => res.send(status));
     }
 
