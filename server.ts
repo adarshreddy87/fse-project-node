@@ -33,16 +33,15 @@ let sess = {
     // put this into an env file
     secret: "secretKey",
     proxy: true,
-    cookie: {
-        // this must be set to false when running the client and server locally.
-        // when we deploy, change this to true
-        secure: false,
-        sameSite: 'none'
-        // provide resave option (per warning)
+    saveUninitialized : true,
+    resave : true,
+    cookie : {
+        sameSite: process.env.ENVIRONMENT === "PRODUCTION" ? 'none' : 'lax',
+        secure: process.env.ENVIRONMENT === "PRODUCTION",
     }
 }
 
-if (process.env.ENV === 'production') {
+if (process.env.ENVIRONMENT === 'PRODUCTION') {
     app.set('trust proxy', 1)
     sess.cookie.secure = true;
 }
@@ -53,7 +52,7 @@ app.use(session(sess));
 app.use(express.json());
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000']
+    origin: ['http://localhost:3000', 'https://tuiter-react.netlify.app']
 }));
 
 app.get('/hello', (req, res) =>
