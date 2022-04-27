@@ -12,5 +12,5 @@ As described in our project pitch, our final project implements two features: bo
 
 Additionally, we have also implemented Lists. All interactions for this feature must occur inside the Lists tab in the navigation sidebar. Here, there are three tabs: Users, My Users List, and List Tuits. The way this works is as follows:
 * Under Users, you can click the Plus icon to add any user to your list
-* Once a user is added, they will be found under the My Users List tab
+* Once a user is added, they will be found under the My Users List tab. You can optionally remove the users from your list by clicking the 'X' icon.
 * Correspondingly, the List Tuits tab will now render all Tuits created by the users in your list
