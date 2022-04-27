@@ -91,6 +91,13 @@ export default class BookmarkController implements BookmarkControllerI {
             .then(status => res.send(status));
     }
 
+    /**
+     * Retrieves a single Bookmark of a given user ID and tuit ID
+     * @param {Request} req The request from the client, including the path parameters uid and tid representing
+     * the user who has bookmarked the Tuit and Tuit that has been bookmarked
+     * @param {Response} res The response to the client, including the body as a JSON object if such a Bookmark
+     * exists, and null if not
+     */
     findUserBookmarkedTuit(req: Request, res: Response) {
         const uid = req.params.uid;
         const tid = req.params.tid;
@@ -102,6 +109,14 @@ export default class BookmarkController implements BookmarkControllerI {
             .then(bookmark => res.json(bookmark));
     }
 
+    /**
+     * If a Tuit has already been bookmarked by the given user, deletes that bookmark instance. If not,
+     * it creates a new bookmark with the given user ID and tuit ID
+     * @param {Request} req The request from the client, including the path parameters uid and tid representing
+     * the user bookmarking/unbookmarking the Tuit and Tuit that is being bookmarked/unbookmarked
+     * @param {Response} res The response to the client, including the status of whether the bookmark/unbookmark
+     * was successful or not
+     */
     userTogglesBookmark = async (req: Request, res: Response) => {
         const uid = req.params.uid;
         const tid = req.params.tid;
@@ -124,6 +139,13 @@ export default class BookmarkController implements BookmarkControllerI {
         }
     }
 
+    /**
+     * Deletes all bookmarks whose bookmarkedBy property equals the provided tuit ID
+     * @param {Request} req The request from the client, including the path parameter tid representing
+     * the bookmarkedBy property for which all bookmarks should be deleted
+     * @param {Response} res The response from the client, including the status on whether the
+     * deletion(s) was successful or not
+     */
     deleteAllBookmarksOfTuit = async(req: Request, res: Response) => {
         await BookmarkController.bookmarkDao.deleteAllBookmarksOfTuit(req.params.tid)
             .then(status => res.send(status));
